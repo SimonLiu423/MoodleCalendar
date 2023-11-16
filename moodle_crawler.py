@@ -5,7 +5,7 @@ import json
 import datetime
 
 
-class WebCrawler:
+class MoodleCrawler:
     def __init__(self):
         self.session = requests.Session()
         self.session.headers.update({
