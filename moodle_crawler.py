@@ -5,10 +5,6 @@ import json
 import datetime
 
 
-def parse_date(date_str):
-    return re.sub(r'(\d+)年\s*(\d{1,2})月\s*(\d{1,2})日.*\)\s*(\d{1,2}:\d{1,2}).*', r'\1-\2-\3T\4', date_str) + ":00"
-
-
 class WebCrawler:
     def __init__(self):
         self.session = requests.Session()
@@ -119,3 +115,7 @@ def get_next_k_month_timestamp(k):
 
         timestamps.append(int(datetime.datetime(year, month, 5).timestamp()))
     return timestamps
+
+
+def parse_date(date_str):
+    return re.sub(r'(\d+)年\s*(\d{1,2})月\s*(\d{1,2})日.*\)\s*(\d{1,2}:\d{1,2}).*', r'\1-\2-\3T\4', date_str) + ":00"
