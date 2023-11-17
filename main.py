@@ -1,7 +1,5 @@
-import datetime
-
-from google_calendar import GoogleCalendar
-from moodle_crawler import *
+from utils.google_calendar import GoogleCalendar
+from utils.moodle_crawler import *
 from dateutil.relativedelta import relativedelta
 
 
