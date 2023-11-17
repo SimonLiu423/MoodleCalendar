@@ -1,4 +1,4 @@
-name: Run main.py
+name: Sync Calendar
 on: push
 jobs:
   run:
