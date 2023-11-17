@@ -12,6 +12,14 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+      - name: Decrypt credentials
+        working-directory: ./secrets
+        env:
+          PASSPHRASE: ${{ secrets.PASSPHRASE }}
+        run: |
+          gpg --quiet --batch --yes --decrypt --passphrase="${PASSPHRASE}" --output api_credentials.json api_credentials.json.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${PASSPHRASE}" --output moodle_credentials.json moodle_credentials.json.gpg
+          gpg --quiet --batch --yes --decrypt --passphrase="${PASSPHRASE}" --output token.json token.json.gpg
       - name: Run main.py
         run: |
           python main.py
