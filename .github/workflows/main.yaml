@@ -1,5 +1,8 @@
 name: Sync Calendar
-on: push
+on:
+  push:
+  schedule:
+    - cron: '0 */8 * * *' # Every 8 hours
 jobs:
   run:
     runs-on: ubuntu-latest
