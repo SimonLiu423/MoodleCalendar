@@ -1,2 +1,3 @@
-# DeadlineSyncer
-An automation script that imports assignment deadlines from NCKU Moodle to Google Calendar
+# Moodle Calendar
+## Description
+A simple application that crawls your Moodle calendar and imports it into your Google Calendar.
