@@ -44,7 +44,7 @@ def event_identical(event, assign):
 
 def main():
     # load username, password from credentials.json
-    with open('moodle_credentials.json', 'r') as f:
+    with open('secrets/moodle_credentials.json', 'r') as f:
         credentials = json.load(f)
         username = credentials['username']
         password = credentials['password']
@@ -53,7 +53,7 @@ def main():
     web_crawler = MoodleCrawler()
     web_crawler.login(username, password)
 
-    cal_api = GoogleCalendar()
+    cal_api = GoogleCalendar('secrets/api_credentials.json', 'secrets/token.json')
     # get calendar id
     calendars = cal_api.list_calendars()
     cal_id = get_cal_id(calendars, 'Moodle Deadline')
