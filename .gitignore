@@ -1,6 +1,6 @@
-credentials.json
-moodle_credentials.json
-token.json
+secrets/api_credentials.json
+secrets/moodle_credentials.json
+secrets/token.json
 .idea/
 # Byte-compiled / optimized / DLL files
 __pycache__/
