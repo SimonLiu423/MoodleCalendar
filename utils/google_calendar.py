@@ -13,6 +13,7 @@ class GoogleCalendar:
         self.token_path = token_path
         self.credentials = self.get_credentials(credentials_path, token_path)
         self.service = self.build_service()
+        self.timezone = 'Asia/Taipei'
 
     def get_credentials(self, credentials_path, token_path):
         creds = None
@@ -41,7 +42,7 @@ class GoogleCalendar:
         calendar = {
             'summary': summary,
             'description': description,
-            'timeZone': 'Asia/Taipei'
+            'timeZone': self.timezone,
         }
         calendar = self.service.calendars().insert(body=calendar).execute()
         return calendar.get('id')
@@ -52,11 +53,11 @@ class GoogleCalendar:
             'description': description,
             'start': {
                 'dateTime': start_time,
-                'timeZone': 'Asia/Taipei',
+                'timeZone': self.timezone
             },
             'end': {
                 'dateTime': end_time,
-                'timeZone': 'Asia/Taipei',
+                'timeZone': self.timezone
             },
             'colorId': str(color_id),
         }
@@ -69,11 +70,11 @@ class GoogleCalendar:
             'description': description,
             'start': {
                 'dateTime': start_time,
-                'timeZone': 'Asia/Taipei',
+                'timeZone': self.timezone,
             },
             'end': {
                 'dateTime': end_time,
-                'timeZone': 'Asia/Taipei',
+                'timeZone': self.timezone,
             },
             'colorId': str(color_id),
         }

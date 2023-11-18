@@ -1,5 +1,8 @@
+import json
+import datetime
+
 from utils.google_calendar import GoogleCalendar
-from utils.moodle_crawler import *
+from utils.moodle_crawler import MoodleCrawler, SubmissionStatusError
 from dateutil.relativedelta import relativedelta
 
 
@@ -25,7 +28,7 @@ def get_color_id(submission_status):
     elif submission_status == 'submitted':
         return 2
     else:
-        raise Exception('Unknown submission status')
+        raise SubmissionStatusError('Unexpected submission status: {}'.format(submission_status))
 
 
 def event_identical(event, assign):

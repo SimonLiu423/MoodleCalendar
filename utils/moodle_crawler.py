@@ -5,8 +5,25 @@ import json
 import datetime
 
 
+class MoodleCrawlerError(Exception):
+    pass
+
+
+class SubmissionNotFoundError(MoodleCrawlerError):
+    pass
+
+
+class SubmissionStatusError(MoodleCrawlerError):
+    pass
+
+
+class DueDateError(MoodleCrawlerError):
+    pass
+
+
 class MoodleCrawler:
     def __init__(self):
+        self.parser = 'html.parser'
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) '
@@ -17,7 +34,7 @@ class MoodleCrawler:
         self.login_token = self.get_login_token()
 
     def get_login_token(self):
-        soup = bs4.BeautifulSoup(self.session.get('https://moodle.ncku.edu.tw/').text, 'html.parser')
+        soup = bs4.BeautifulSoup(self.session.get('https://moodle.ncku.edu.tw/').text, self.parser)
         token = soup.find('input', {'name': 'logintoken'})['value']
         return token
 
@@ -37,7 +54,7 @@ class MoodleCrawler:
         assign_urls = []
 
         for timestamp in timestamps:
-            soup = bs4.BeautifulSoup(self.session.get(calendar_url.format(timestamp)).text, 'html.parser')
+            soup = bs4.BeautifulSoup(self.session.get(calendar_url.format(timestamp)).text, self.parser)
             for event in soup.find_all('a', {'data-action': 'view-event'}):
                 href = event['href']
                 if 'assign' in href:
@@ -46,7 +63,7 @@ class MoodleCrawler:
         return assign_urls
 
     def get_assign_info(self, assign_url):
-        soup = bs4.BeautifulSoup(self.session.get(assign_url).text, 'html.parser')
+        soup = bs4.BeautifulSoup(self.session.get(assign_url).text, self.parser)
         assign_info = {
             'title': soup.find('div', {'role': 'main'}).find('h2').text.strip(),
             'can_submit': False,
@@ -69,7 +86,7 @@ class MoodleCrawler:
             submission_status_td = submission_status_th.find_next_sibling('td')
             submission_status = submission_status_td.text.strip() if submission_status_td else None
         else:
-            raise Exception('Cannot find the submission status')
+            raise SubmissionStatusError('submission status element not found')
 
         if submission_status in ['沒有繳交作業', '這個作業還沒人繳交']:
             assign_info['submission_status'] = 'not_submitted'
@@ -84,7 +101,7 @@ class MoodleCrawler:
             due_date_td = due_date_th.find_next_sibling('td')
             due_date = due_date_td.text.strip() if due_date_td else None
         else:
-            raise Exception('Cannot find the due date')
+            raise DueDateError('due date element not found')
 
         # parse date
         assign_info['deadline'] = parse_date(due_date)
