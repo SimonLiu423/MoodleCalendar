@@ -2,8 +2,8 @@ import json
 import datetime
 import os
 
-from src.sync_calendar.utils.google_calendar import GoogleCalendar
-from src.sync_calendar.utils.moodle_crawler import MoodleCrawler, SubmissionStatusError
+from utils.google_calendar import GoogleCalendar
+from utils.moodle_crawler import MoodleCrawler, SubmissionStatusError
 from dateutil.relativedelta import relativedelta
 
 
