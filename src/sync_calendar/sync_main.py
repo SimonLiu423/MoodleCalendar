@@ -1,5 +1,6 @@
 import json
 import datetime
+import os
 
 from utils.google_calendar import GoogleCalendar
 from utils.moodle_crawler import MoodleCrawler, SubmissionStatusError
@@ -46,8 +47,11 @@ def event_identical(event, assign):
 
 
 def main():
+    current_path = os.path.dirname(os.path.abspath(__file__))
+    secrets_path = os.path.join(current_path, '../../secrets')
     # load username, password from credentials.json
-    with open('secrets/moodle_credentials.json', 'r') as f:
+    moodle_creds_path = os.path.join(secrets_path, 'moodle_credentials.json')
+    with open(moodle_creds_path, 'r') as f:
         credentials = json.load(f)
         username = credentials['username']
         password = credentials['password']
@@ -56,7 +60,9 @@ def main():
     web_crawler = MoodleCrawler()
     web_crawler.login(username, password)
 
-    cal_api = GoogleCalendar('secrets/api_credentials.json', 'secrets/token.json')
+    api_creds_path = os.path.join(secrets_path, 'api_credentials.json')
+    token_path = os.path.join(secrets_path, 'token.json')
+    cal_api = GoogleCalendar(api_creds_path, token_path)
     # get calendar id
     calendars = cal_api.list_calendars()
     cal_id = get_cal_id(calendars, 'Moodle Deadline')

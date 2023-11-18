@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 
 # Wrap google calendar api
 class GoogleCalendar:
-    def __init__(self, credentials_path='credentials.json', token_path='token.json'):
+    def __init__(self, credentials_path, token_path):
         self.scopes = ['https://www.googleapis.com/auth/calendar']
         self.credentials_path = credentials_path
         self.token_path = token_path
