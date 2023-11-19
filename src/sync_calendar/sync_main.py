@@ -46,22 +46,18 @@ def event_identical(event, assign):
     return True
 
 
-def main():
+def main(moodle_session_id=None, token_path=None):
     current_path = os.path.dirname(os.path.abspath(__file__))
     secrets_path = os.path.join(current_path, '../../secrets')
-    # load username, password from credentials.json
-    moodle_creds_path = os.path.join(secrets_path, 'moodle_credentials.json')
-    with open(moodle_creds_path, 'r') as f:
-        credentials = json.load(f)
-        username = credentials['username']
-        password = credentials['password']
 
     # login to moodle
-    web_crawler = MoodleCrawler()
-    web_crawler.login(username, password)
+    moodle_creds_path = os.path.join(secrets_path, 'moodle_credentials.json')
+    web_crawler = MoodleCrawler(session_id=moodle_session_id)
+    if moodle_session_id is None:
+        web_crawler.login(moodle_creds_path)
 
+    # authenticate google calendar api
     api_creds_path = os.path.join(secrets_path, 'api_credentials.json')
-    token_path = os.path.join(secrets_path, 'token.json')
     cal_api = GoogleCalendar(api_creds_path, token_path)
     # get calendar id
     calendars = cal_api.list_calendars()
@@ -97,4 +93,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    token_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../secrets/token.json')
+    main(token_path=token_path)
