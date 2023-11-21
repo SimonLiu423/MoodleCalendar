@@ -21,13 +21,13 @@ def get_iso_format_date(date, delta_year=0, delta_month=0, delta_day=0):
     return date.isoformat() + '+08:00'
 
 
-def get_color_id(submission_status):
-    if not submission_status or submission_status == 'unknown':
-        return 8
+def get_color_id(can_submit, submission_status):
+    if not can_submit or not submission_status or submission_status == 'unknown':
+        return 8    # gray
     elif submission_status == 'not_submitted':
-        return 11
+        return 11   # red
     elif submission_status == 'submitted':
-        return 2
+        return 2    # green
     else:
         raise SubmissionStatusError('Unexpected submission status: {}'.format(submission_status))
 
@@ -41,7 +41,7 @@ def event_identical(event, assign):
         return False
     if event['end']['dateTime'] != assign['deadline']:
         return False
-    if event['colorId'] != str(get_color_id(assign['submission_status'])):
+    if event['colorId'] != str(get_color_id(assign['can_submit'], assign['submission_status'])):
         return False
     return True
 
@@ -72,7 +72,7 @@ def main(moodle_session_id=None, token_path=None):
                                      time_max=get_iso_format_date(datetime.datetime.now(), delta_month=k))
 
     for assign in assign_info:
-        color_id = get_color_id(assign['submission_status'])
+        color_id = get_color_id(assign['can_submit'], assign['submission_status'])
 
         # check if the assignment is already in the calendar
         exist = False
