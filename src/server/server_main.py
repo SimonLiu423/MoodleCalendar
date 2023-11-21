@@ -1,15 +1,41 @@
 import os.path
 import src.sync_calendar.sync_main as sync_main
+import google_crc32c
 
 from flask import Flask, request, make_response, redirect
 from google_auth_oauthlib.flow import Flow
 from src.server.utils.storage import CloudStorage
+from google.cloud import secretmanager
 
 app = Flask(__name__)
 
-# Configure the OAuth2 flow
+
+def save_secret_version(path, project_id, secret_id, version_id="latest"):
+    # Create the Secret Manager client.
+    client = secretmanager.SecretManagerServiceClient()
+
+    # Build the resource name of the secret version.
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+
+    # Access the secret version.
+    response = client.access_secret_version(request={"name": name})
+
+    # Verify payload checksum.
+    crc32c = google_crc32c.Checksum()
+    crc32c.update(response.payload.data)
+    if response.payload.data_crc32c != int(crc32c.hexdigest(), 16):
+        print("Data corruption detected.")
+        return response
+
+    payload = response.payload.data.decode("UTF-8")
+    with open(path, 'w') as token:
+        token.write(payload)
+
+    return path
+
+
 flow = Flow.from_client_secrets_file(
-    'secrets/api_credentials.json',
+    save_secret_version('api_credentials.json', 'moodle-405408', 'api_credentials'),
     scopes=['https://www.googleapis.com/auth/calendar'],
     redirect_uri='https://sync-calendar-app-xt6u7vzbeq-de.a.run.app/callback'
 )
