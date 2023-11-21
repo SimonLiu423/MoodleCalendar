@@ -9,4 +9,4 @@ COPY . .
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 
-CMD ["gunicorn", "--timeout", "0", "-w", "4", "src.server.server_main:app"]
+CMD ["gunicorn", "--timeout", "0", "-w", "4", "-b", "localhost:8080", "src.server.server_main:app"]
