@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 
 flow = Flow.from_client_secrets_file(
-    'secrets/api_credentials.json',
+    '/secrets/api_credentials.json',
     scopes=['https://www.googleapis.com/auth/calendar'],
     redirect_uri='https://sync-calendar-app-xt6u7vzbeq-de.a.run.app/callback'
 )
