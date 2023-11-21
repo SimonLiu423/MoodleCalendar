@@ -1,29 +1,24 @@
 import os.path
 import src.sync_calendar.sync_main as sync_main
-import google_crc32c
 
 from flask import Flask, request, make_response, redirect
 from google_auth_oauthlib.flow import Flow
-from src.server.utils.storage import CloudStorage
-from google.cloud import secretmanager
 
 app = Flask(__name__)
-
 
 flow = Flow.from_client_secrets_file(
     '/secrets/api_credentials.json',
     scopes=['https://www.googleapis.com/auth/calendar'],
     redirect_uri='https://sync-calendar-app-xt6u7vzbeq-de.a.run.app/callback'
 )
-storage = CloudStorage('moodle-405408', 'user_tokens')
-token_dir = os.path.join(os.path.dirname(__file__), '../../secrets')
+
+token_dir = os.path.join('/', 'tokens')
 
 
 def check_token_exist(user_id):
     token_fname = f'{user_id}.json'
-    token_path = os.path.join(os.path.dirname(__file__), '../../secrets', token_fname)
-    if storage.check_blob_exist(token_fname):
-        storage.download_blob(token_fname, token_path)
+    token_path = os.path.join(token_dir, token_fname)
+    return os.path.exists(token_path)
 
 
 @app.route("/", methods=['GET'])
@@ -36,7 +31,6 @@ def trigger_sync():
 
     token_fname = f'{user_id}.json'
     token_path = os.path.join(token_dir, token_fname)
-    storage.download_blob(token_fname, token_path)
 
     sync_main.main(moodle_session_id=moodle_session_id, token_path=token_path)
     return make_response('OK', 200)
