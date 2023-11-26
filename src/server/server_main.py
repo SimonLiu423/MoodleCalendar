@@ -46,7 +46,7 @@ def trigger_sync():
     return make_response('OK', 200)
 
 
-@app.route('/auth', methods=['GET'])
+@app.route('/auth', methods=['POST'])
 def auth():
     print(request)
     authorization_url, state = flow.authorization_url(
