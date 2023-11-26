@@ -21,7 +21,17 @@ def check_token_exist(user_id):
     return os.path.exists(token_path)
 
 
-@app.route("/", methods=['GET'])
+# handle preflight request
+@app.route("/", methods=['OPTIONS'])
+def preflight():
+    response = make_response('OK', 200)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
+    response.headers['Access-Control-Allow-Headers'] = 'Moodle-Session, Moodle-ID'
+    return response
+
+
+@app.route("/", methods=['POST'])
 def trigger_sync():
     moodle_session_id = request.headers.get('Moodle-Session')
     user_id = request.headers.get('Moodle-ID')
