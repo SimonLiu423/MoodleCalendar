@@ -37,18 +37,21 @@ def trigger_sync():
     user_id = request.headers.get('Moodle-ID')
 
     if not check_token_exist(user_id):
-        return make_response('Unauthorized', 401)
+        response = make_response('Unauthorized', 401)
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
 
     token_fname = f'{user_id}.json'
     token_path = os.path.join(token_dir, token_fname)
 
     sync_main.main(moodle_session_id=moodle_session_id, token_path=token_path)
-    return make_response('OK', 200)
+    response = make_response('OK', 200)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 
 @app.route('/auth', methods=['POST'])
 def auth():
-    print(request)
     authorization_url, state = flow.authorization_url(
         access_type='offline',
         include_granted_scopes='true'
@@ -66,7 +69,9 @@ def oauth2callback():
     flow.fetch_token(authorization_response=request.url)
 
     if not state or state != request.args['state']:
-        return 'State error', 400
+        response = make_response('State error', 400)
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        return response
 
     # Now you have the tokens, you can use them to make API calls
     credentials = flow.credentials
@@ -76,7 +81,9 @@ def oauth2callback():
     with open(token_path, 'w') as token:
         token.write(credentials)
 
-    return make_response('OK', 200)
+    response = make_response('OK', 200)
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
 
 
 # start the server
