@@ -2,9 +2,11 @@ import os.path
 import src.sync_calendar.sync_main as sync_main
 
 from flask import Flask, request, make_response, redirect
+from flask_cors import CORS
 from google_auth_oauthlib.flow import Flow
 
 app = Flask(__name__)
+CORS(app, origins=['https://moodle.ncku.edu.tw', 'https://sync-calendar-app-xt6u7vzbeq-de.a.run.app'])
 
 flow = Flow.from_client_secrets_file(
     '/secrets/api_credentials.json',
@@ -21,33 +23,19 @@ def check_token_exist(user_id):
     return os.path.exists(token_path)
 
 
-# handle preflight request
-@app.route("/", methods=['OPTIONS'])
-def preflight():
-    response = make_response('OK', 200)
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, POST'
-    response.headers['Access-Control-Allow-Headers'] = 'Moodle-Session, Moodle-ID'
-    return response
-
-
 @app.route("/", methods=['POST'])
 def trigger_sync():
     moodle_session_id = request.headers.get('Moodle-Session')
     user_id = request.headers.get('Moodle-ID')
 
     if not check_token_exist(user_id):
-        response = make_response('Unauthorized', 401)
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
+        return make_response('Token not found', 404)
 
     token_fname = f'{user_id}.json'
     token_path = os.path.join(token_dir, token_fname)
 
     sync_main.main(moodle_session_id=moodle_session_id, token_path=token_path)
-    response = make_response('OK', 200)
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+    return make_response('OK', 200)
 
 
 @app.route('/auth', methods=['POST'])
@@ -69,9 +57,7 @@ def oauth2callback():
     flow.fetch_token(authorization_response=request.url)
 
     if not state or state != request.args['state']:
-        response = make_response('State error', 400)
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        return response
+        return make_response('State not match', 400)
 
     # Now you have the tokens, you can use them to make API calls
     credentials = flow.credentials
@@ -81,9 +67,7 @@ def oauth2callback():
     with open(token_path, 'w') as token:
         token.write(credentials)
 
-    response = make_response('OK', 200)
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    return response
+    return make_response('OK', 200)
 
 
 # start the server
