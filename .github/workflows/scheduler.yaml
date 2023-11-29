@@ -37,4 +37,4 @@ jobs:
           REPOSITORY: "MoodleCalendar"
           ACCESS_TOKEN: "${{ secrets.ACCESS_TOKEN }}"
           SECRET_NAME: "MY_TOKEN"
-          SECRET_VALUE: "${{ steps.encode_token.outputs.enc_token }}
+          SECRET_VALUE: "${{ steps.encode_token.outputs.enc_token }}"
