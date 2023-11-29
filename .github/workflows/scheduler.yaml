@@ -18,8 +18,8 @@ jobs:
       - name: Decode token from secret to file
         working-directory: ./secrets
         env:
-          API_CREDS_BASE64: ${{ secrets.API_CREDS }}
-          MOODLE_CREDS_BASE64: ${{ secrets.MOODLE_CREDS }}
+          API_CREDS_BASE64: ${{ secrets.API_CREDENTIALS }}
+          MOODLE_CREDS_BASE64: ${{ secrets.MOODLE_CREDENTIALS }}
           TOKEN_BASE64: ${{ secrets.MY_TOKEN }}
         run: |
           echo $API_CREDS_BASE64 | base64 -d > api_credentials.json
