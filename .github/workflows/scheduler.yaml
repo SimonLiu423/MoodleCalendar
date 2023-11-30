@@ -25,6 +25,7 @@ jobs:
           echo $API_CREDS_BASE64 | base64 -d > api_credentials.json
           echo $MOODLE_CREDS_BASE64 | base64 -d > moodle_credentials.json
           echo $TOKEN_BASE64 | base64 -d > token.json
+          cat token.json
       - name: Run main.py
         run: |
           python -m src.sync_calendar.sync_main
