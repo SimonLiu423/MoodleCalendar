@@ -15,14 +15,31 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-      - name: Decrypt credentials
+      - name: Create secrets directory
+        run: |
+          mkdir -p ./secrets
+      - name: Decode token from secret to file
         working-directory: ./secrets
         env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          API_CREDS_BASE64: ${{ secrets.API_CREDENTIALS }}
+          MOODLE_CREDS_BASE64: ${{ secrets.MOODLE_CREDENTIALS }}
+          TOKEN_BASE64: ${{ secrets.MY_TOKEN }}
         run: |
-          gpg --quiet --batch --yes --decrypt --passphrase="${GPG_PASSPHRASE}" --output api_credentials.json api_credentials.json.gpg
-          gpg --quiet --batch --yes --decrypt --passphrase="${GPG_PASSPHRASE}" --output moodle_credentials.json moodle_credentials.json.gpg
-          gpg --quiet --batch --yes --decrypt --passphrase="${GPG_PASSPHRASE}" --output token.json token.json.gpg
+          echo $API_CREDS_BASE64 | base64 -d > api_credentials.json
+          echo $MOODLE_CREDS_BASE64 | base64 -d > moodle_credentials.json
+          echo $TOKEN_BASE64 | base64 -d > token.json
       - name: Run main.py
         run: |
-          python ./src/sync_calendar/sync_main.py
+          python -m src.sync_calendar.sync_main
+      - name: Encode token
+        id: encode_token
+        working-directory: ./secrets
+        run: |
+          ENC_TOKEN=$(base64  -w 0 token.json)
+          echo "::add-mask::${ENC_TOKEN}"
+          echo "enc_token=${ENC_TOKEN}" >> $GITHUB_OUTPUT
+      - name: Update token secret
+        run: |
+          gh secret set MY_TOKEN -b "${{ steps.encode_token.outputs.enc_token }}"
+        env:
+          GITHUB_TOKEN: "${{ secrets.ACCESS_TOKEN }}"

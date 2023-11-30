@@ -2,8 +2,8 @@ import json
 import datetime
 import os
 
-from utils.google_calendar import GoogleCalendar
-from utils.moodle_crawler import MoodleCrawler, SubmissionStatusError
+from src.sync_calendar.utils.google_calendar import GoogleCalendar
+from src.sync_calendar.utils.moodle_crawler import MoodleCrawler, SubmissionStatusError
 from dateutil.relativedelta import relativedelta
 
 
@@ -21,13 +21,13 @@ def get_iso_format_date(date, delta_year=0, delta_month=0, delta_day=0):
     return date.isoformat() + '+08:00'
 
 
-def get_color_id(submission_status):
-    if not submission_status or submission_status == 'unknown':
-        return 8
+def get_color_id(can_submit, submission_status):
+    if not can_submit or not submission_status or submission_status == 'unknown':
+        return 8    # gray
     elif submission_status == 'not_submitted':
-        return 11
+        return 11   # red
     elif submission_status == 'submitted':
-        return 2
+        return 2    # green
     else:
         raise SubmissionStatusError('Unexpected submission status: {}'.format(submission_status))
 
@@ -41,27 +41,23 @@ def event_identical(event, assign):
         return False
     if event['end']['dateTime'] != assign['deadline']:
         return False
-    if event['colorId'] != str(get_color_id(assign['submission_status'])):
+    if event['colorId'] != str(get_color_id(assign['can_submit'], assign['submission_status'])):
         return False
     return True
 
 
-def main():
+def main(moodle_session_id=None, token_path=None):
     current_path = os.path.dirname(os.path.abspath(__file__))
     secrets_path = os.path.join(current_path, '../../secrets')
-    # load username, password from credentials.json
-    moodle_creds_path = os.path.join(secrets_path, 'moodle_credentials.json')
-    with open(moodle_creds_path, 'r') as f:
-        credentials = json.load(f)
-        username = credentials['username']
-        password = credentials['password']
 
     # login to moodle
-    web_crawler = MoodleCrawler()
-    web_crawler.login(username, password)
+    moodle_creds_path = os.path.join(secrets_path, 'moodle_credentials.json')
+    web_crawler = MoodleCrawler(session_id=moodle_session_id)
+    if moodle_session_id is None:
+        web_crawler.login(moodle_creds_path)
 
+    # authenticate google calendar api
     api_creds_path = os.path.join(secrets_path, 'api_credentials.json')
-    token_path = os.path.join(secrets_path, 'token.json')
     cal_api = GoogleCalendar(api_creds_path, token_path)
     # get calendar id
     calendars = cal_api.list_calendars()
@@ -76,7 +72,7 @@ def main():
                                      time_max=get_iso_format_date(datetime.datetime.now(), delta_month=k))
 
     for assign in assign_info:
-        color_id = get_color_id(assign['submission_status'])
+        color_id = get_color_id(assign['can_submit'], assign['submission_status'])
 
         # check if the assignment is already in the calendar
         exist = False
@@ -97,4 +93,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    token_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../secrets/token.json')
+    main(token_path=token_path)

@@ -22,8 +22,9 @@ class DueDateError(MoodleCrawlerError):
 
 
 class MoodleCrawler:
-    def __init__(self):
+    def __init__(self, session_id=None):
         self.parser = 'html.parser'
+        self.login_token = None
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) '
@@ -31,14 +32,21 @@ class MoodleCrawler:
                           'Chrome/53.0.2785.143 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         })
-        self.login_token = self.get_login_token()
+        if session_id:
+            self.session.cookies.set('MoodleSession', session_id)
 
     def get_login_token(self):
         soup = bs4.BeautifulSoup(self.session.get('https://moodle.ncku.edu.tw/').text, self.parser)
         token = soup.find('input', {'name': 'logintoken'})['value']
         return token
 
-    def login(self, username, password):
+    def login(self, creds_path):
+        with open(creds_path, 'r') as f:
+            credentials = json.load(f)
+            username = credentials['username']
+            password = credentials['password']
+
+        self.login_token = self.get_login_token()
         login_url = 'https://moodle.ncku.edu.tw/login/index.php'
         payload = {
             'Mime Type': 'application/x-www-form-urlencoded',
