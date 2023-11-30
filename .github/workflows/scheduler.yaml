@@ -36,7 +36,8 @@ jobs:
         working-directory: ./secrets
         run: |
           ENC_TOKEN=$(base64  -w 0 token.json)
-          echo "enc_token=::add-mask::${ENC_TOKEN}" >> $GITHUB_OUTPUT
+          echo "::add-mask::${ENC_TOKEN}"
+          echo "enc_token=${ENC_TOKEN}" >> $GITHUB_OUTPUT
       - name: Update token secret
         run: |
           gh secret set MY_TOKEN -b "${{ steps.encode_token.outputs.enc_token }}"
