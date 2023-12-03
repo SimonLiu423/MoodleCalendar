@@ -9,6 +9,8 @@ from google_auth_oauthlib.flow import Flow
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(hours=2)
+app.config.SESSION_COOKIE_SECURE = True
+app.config.SESSION_COOKIE_SAMESITE = 'None'
 
 # Enable CORS for all routes
 CORS(app, supports_credentials=True,
