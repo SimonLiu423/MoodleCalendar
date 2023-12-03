@@ -11,7 +11,8 @@ app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(hours=2)
 
 # Enable CORS for all routes
-CORS(app, origins=['https://moodle.ncku.edu.tw', 'https://sync-calendar-app-xt6u7vzbeq-de.a.run.app'])
+CORS(app, supports_credentials=True,
+     origins=['https://moodle.ncku.edu.tw', 'https://sync-calendar-app-xt6u7vzbeq-de.a.run.app'])
 
 flow = Flow.from_client_secrets_file(
     '/secrets/api_credentials.json',
