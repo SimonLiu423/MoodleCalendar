@@ -1,11 +1,16 @@
 import os.path
 import src.sync_calendar.sync_main as sync_main
 
-from flask import Flask, request, make_response, redirect
+from flask import Flask, request, make_response, redirect, session, url_for
 from flask_cors import CORS
+from datetime import timedelta
 from google_auth_oauthlib.flow import Flow
 
 app = Flask(__name__)
+app.secret_key = os.urandom(24)
+app.permanent_session_lifetime = timedelta(hours=2)
+
+# Enable CORS for all routes
 CORS(app, origins=['https://moodle.ncku.edu.tw', 'https://sync-calendar-app-xt6u7vzbeq-de.a.run.app'])
 
 flow = Flow.from_client_secrets_file(
@@ -23,10 +28,28 @@ def check_token_exist(user_id):
     return os.path.exists(token_path)
 
 
+@app.route("/login", methods=['POST'])
+def login():
+    user_id = request.headers.get('Moodle-ID')
+    moodle_session = request.headers.get('Moodle-Session')
+    if 'user_id' in session:
+        session.clear()
+
+    session.permanent = True
+    session['user_id'] = user_id
+    session['moodle_session'] = moodle_session
+    return make_response('OK', 200)
+
+
 @app.route("/", methods=['POST'])
 def trigger_sync():
-    moodle_session_id = request.headers.get('Moodle-Session')
-    user_id = request.headers.get('Moodle-ID')
+    user_id = session.get('user_id', None)
+    moodle_session_id = session.get('moodle_session', None)
+
+    if user_id is None:
+        return make_response('User not logged in', 401)
+    if moodle_session_id is None:
+        return make_response('Moodle session not found', 404)
 
     if not check_token_exist(user_id):
         return make_response('Token not found', 404)
@@ -44,16 +67,18 @@ def auth():
         access_type='offline',
         include_granted_scopes='true'
     )
-    os.environ['OAUTH2_STATE'] = state
+    session['OAUTH2_STATE'] = state
 
     return redirect(authorization_url)
 
 
 @app.route('/callback')
 def oauth2callback():
-    user_id = request.headers['Moodle-ID']
+    user_id = session.get('user_id', None)
+    if user_id is None:
+        return make_response('User not logged in', 401)
 
-    state = os.environ.get('OAUTH2_STATE')
+    state = session.get('OAUTH2_STATE')
     flow.fetch_token(authorization_response=request.url)
 
     if not state or state != request.args['state']:
