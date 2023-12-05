@@ -72,10 +72,7 @@ def auth():
     )
     session['OAUTH2_STATE'] = state
     
-    response = make_response('OK', 200)
-    response.body = authorization_url
-
-    return response
+    return make_response(authorization_url, 200)
 
 
 @app.route('/callback')
