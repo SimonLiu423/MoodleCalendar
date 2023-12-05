@@ -86,6 +86,9 @@ def oauth2callback():
     auth_code = request.args.get('code')
     flow.fetch_token(code=auth_code)
 
+    if not state:
+        return make_response('State not found', 400)
+
     if not state or state != request.args['state']:
         return make_response('State not match', 400)
 
