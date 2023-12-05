@@ -71,8 +71,11 @@ def auth():
         include_granted_scopes='true'
     )
     session['OAUTH2_STATE'] = state
+    
+    response = make_response('OK', 200)
+    response.body = authorization_url
 
-    return redirect(authorization_url)
+    return response
 
 
 @app.route('/callback')
