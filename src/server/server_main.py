@@ -82,7 +82,9 @@ def oauth2callback():
         return make_response('User not logged in', 401)
 
     state = session.get('OAUTH2_STATE')
-    flow.fetch_token(authorization_response=request.url)
+    
+    auth_code = request.args.get('code')
+    flow.fetch_token(code=auth_code)
 
     if not state or state != request.args['state']:
         return make_response('State not match', 400)
