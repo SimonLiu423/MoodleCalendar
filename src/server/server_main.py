@@ -41,6 +41,7 @@ def login():
     session.permanent = True
     session['user_id'] = user_id
     session['moodle_session'] = moodle_session
+
     return make_response('OK', 200)
 
 
@@ -70,6 +71,7 @@ def auth():
         access_type='offline',
         include_granted_scopes='true'
     )
+    
     session['OAUTH2_STATE'] = state
     
     return make_response(authorization_url, 200)
@@ -89,7 +91,7 @@ def oauth2callback():
     if not state:
         return make_response('State not found', 400)
 
-    if not state or state != request.args['state']:
+    if not state or state != request.args.get('state'):
         return make_response('State not match', 400)
 
     # Now you have the tokens, you can use them to make API calls
@@ -98,11 +100,11 @@ def oauth2callback():
     token_fname = f'{user_id}.json'
     token_path = os.path.join(token_dir, token_fname)
     with open(token_path, 'w') as token:
-        token.write(credentials)
+        token.write(credentials.to_json())
 
     return make_response('OK', 200)
 
 
 # start the server
 if __name__ == "__main__":
-    app.run(host='localhost', port=8080, debug=False)
+    app.run(host='localhost', port=8080, debug=True)
