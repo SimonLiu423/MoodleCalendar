@@ -1,7 +1,7 @@
 import os.path
 import src.sync_calendar.sync_main as sync_main
 
-from flask import Flask, request, make_response, redirect, session, url_for
+from flask import Flask, request, make_response, redirect, session, url_for, render_template
 from flask_cors import CORS
 from datetime import timedelta
 from google_auth_oauthlib.flow import Flow
@@ -104,6 +104,11 @@ def oauth2callback():
         token.write(credentials.to_json())
 
     return make_response('OK', 200)
+
+
+@app.route('/privacy-policy', methods=['GET'])
+def privacy_policy():
+    return render_template('privacy_policy.html')
 
 
 # start the server
