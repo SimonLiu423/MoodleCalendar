@@ -22,7 +22,7 @@ class Config:
         PERMANENT_SESSION_LIFETIME (timedelta): The lifetime of permanent sessions.
         SESSION_COOKIE_PARTITIONED (bool): Whether to partition session cookies.
     """
-    load_dotenv(os.path.join(os.path.curdir, 'envs', '.env'))
+    load_dotenv(os.path.join('/', 'envs', '.env'))
 
     BASE_URL = 'https://sync-calendar-app-xt6u7vzbeq-de.a.run.app'
     TOKEN_DIR = '/tokens'
