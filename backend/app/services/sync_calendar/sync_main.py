@@ -1,10 +1,12 @@
-import json
 import datetime
 import os
 
-from src.sync_calendar.utils.google_calendar import GoogleCalendar
-from src.sync_calendar.utils.moodle_crawler import MoodleCrawler, SubmissionStatusError
 from dateutil.relativedelta import relativedelta
+
+from backend.app.services.sync_calendar.utils.google_calendar import \
+    GoogleCalendar
+from backend.app.services.sync_calendar.utils.moodle_crawler import (
+    MoodleCrawler, SubmissionStatusError)
 
 
 def get_cal_id(calendars, summary):
@@ -68,8 +70,11 @@ def main(moodle_session_id=None, token_path=None):
     # get next k months assignment info
     k = 6
     assign_info = web_crawler.get_next_k_month_assign_info(k)
-    cal_events = cal_api.list_events(cal_id, time_min=get_iso_format_date(datetime.datetime.now()),
-                                     time_max=get_iso_format_date(datetime.datetime.now(), delta_month=k))
+    cal_events = cal_api.list_events(cal_id, time_min=get_iso_format_date(
+        datetime.datetime.now()),
+        time_max=get_iso_format_date(
+        datetime.datetime.now(),
+        delta_month=k))
 
     for assign in assign_info:
         color_id = get_color_id(assign['can_submit'], assign['submission_status'])
@@ -82,16 +87,27 @@ def main(moodle_session_id=None, token_path=None):
                 exist = True
                 # update the event if the event is not identical
                 if not event_identical(event, assign):
-                    cal_api.update_event(cal_id, event['id'], assign['title'], assign['deadline'], assign['deadline'],
-                                         assign['description'], color_id=color_id)
+                    cal_api.update_event(
+                        cal_id, event['id'],
+                        assign['title'],
+                        assign['deadline'],
+                        assign['deadline'],
+                        assign['description'],
+                        color_id=color_id)
                 break
 
         # create the event if the assignment is not in the calendar
         if not exist:
-            cal_api.create_event(cal_id, assign['title'], assign['deadline'], assign['deadline'], assign['description'],
-                                 color_id=color_id)
+            cal_api.create_event(
+                cal_id, assign['title'],
+                assign['deadline'],
+                assign['deadline'],
+                assign['description'],
+                color_id=color_id)
 
 
 if __name__ == '__main__':
-    token_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../secrets/token.json')
+    token_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        '../../secrets/token.json')
     main(token_path=token_path)
