@@ -49,8 +49,7 @@ def event_identical(event, assign):
 
 
 def main(moodle_session_id=None, token_path=None):
-    current_path = os.path.dirname(os.path.abspath(__file__))
-    secrets_path = os.path.join(current_path, '../../secrets')
+    secrets_path = os.path.join('.', 'secrets')
 
     # login to moodle
     moodle_creds_path = os.path.join(secrets_path, 'moodle_credentials.json')
@@ -107,7 +106,5 @@ def main(moodle_session_id=None, token_path=None):
 
 
 if __name__ == '__main__':
-    token_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        '../../secrets/token.json')
+    token_path = os.path.join('.', 'secrets', 'token.json')
     main(token_path=token_path)
