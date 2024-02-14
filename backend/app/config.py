@@ -5,8 +5,6 @@ from datetime import timedelta
 
 from dotenv import load_dotenv
 
-load_dotenv(os.path.join(os.path.curdir, '.env'))
-
 
 class Config:
     """
@@ -24,6 +22,8 @@ class Config:
         PERMANENT_SESSION_LIFETIME (timedelta): The lifetime of permanent sessions.
         SESSION_COOKIE_PARTITIONED (bool): Whether to partition session cookies.
     """
+    load_dotenv(os.path.join(os.path.curdir, 'envs', '.env'))
+
     BASE_URL = 'https://sync-calendar-app-xt6u7vzbeq-de.a.run.app'
     TOKEN_DIR = '/tokens'
     API_CREDS_PATH = '/secrets/api_credentials.json'
@@ -43,7 +43,10 @@ class DevelopmentConfig(Config):
     Configuration class for development environment.
     Inherits from the base Config class.
     """
+    load_dotenv(os.path.join(os.path.curdir, '.env'))
+
     DEBUG = True
+    SECRET_KEY = os.getenv('JWT_SECRET_KEY')
     API_CREDS_PATH = './secrets/api_credentials.json'
     BASE_URL = 'http://localhost:8080'
     TOKEN_DIR = '.'
