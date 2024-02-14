@@ -46,7 +46,7 @@ name: Build and Deploy to Cloud Run
 
 on:
   push:
-    branches: [ "deploy_test" ]
+    branches: [ "deploy_test" , "main" ]
 
 env:
   PROJECT_ID: 'moodle-405408'
