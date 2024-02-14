@@ -3,9 +3,9 @@ import os
 
 from dateutil.relativedelta import relativedelta
 
-from backend.app.services.sync_calendar.utils.google_calendar import \
+from backend.app.services.calendar_syncer.utils.google_calendar import \
     GoogleCalendar
-from backend.app.services.sync_calendar.utils.moodle_crawler import (
+from backend.app.services.calendar_syncer.utils.moodle_crawler import (
     MoodleCrawler, SubmissionStatusError)
 
 

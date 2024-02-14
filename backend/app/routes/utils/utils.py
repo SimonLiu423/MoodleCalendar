@@ -4,7 +4,7 @@ This module contains utility functions for handling tokens and retrieving user I
 
 import os
 
-from backend.app.services.sync_calendar.utils.moodle_crawler import \
+from backend.app.services.calendar_syncer.utils.moodle_crawler import \
     MoodleCrawler
 
 

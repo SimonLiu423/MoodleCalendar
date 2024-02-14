@@ -7,7 +7,7 @@ from flask import (Blueprint, current_app, make_response, render_template,
 from backend.app.routes.utils.session import Session
 from backend.app.routes.utils.utils import (check_token_exist,
                                             get_id_from_session)
-from backend.app.services.sync_calendar import sync_main
+from backend.app.services.calendar_syncer import main
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -77,7 +77,7 @@ def trigger_sync():
         token_path = os.path.join(current_app.config['TOKEN_DIR'], token_fname)
 
         try:
-            sync_main.main(moodle_session_id=moodle_session_id, token_path=token_path)
+            main.main(moodle_session_id=moodle_session_id, token_path=token_path)
             resp = make_response('OK', 200)
         except Exception:
             # Error occurred during sync
