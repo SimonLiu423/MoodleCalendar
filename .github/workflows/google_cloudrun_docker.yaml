@@ -116,7 +116,7 @@ jobs:
         with:
           secrets: |
             /secrets/api_credentials.json=api_credentials:latest
-            /.env=env:latest
+            /envs/.env=env:latest
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           # NOTE: If using a pre-built image, update the image name here
