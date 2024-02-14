@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from dotenv import load_dotenv
 
-load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
+load_dotenv(os.path.join(os.path.curdir, '.env'))
 
 
 class Config:
@@ -55,9 +55,6 @@ class TestingConfig(Config):
     Inherits from the base Config class.
     """
     TESTING = True
-    API_CREDS_PATH = './secrets/api_credentials.json'
-    BASE_URL = 'http://localhost:8080'
-    TOKEN_DIR = '.'
 
 
 class ProductionConfig(Config):
