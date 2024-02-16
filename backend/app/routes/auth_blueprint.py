@@ -79,16 +79,16 @@ def oauth2callback():
 
     credentials = flow.credentials
 
-    try:
-        user_id = get_id_from_session(session.get('moodle_session'))
-        token_fname = f'{user_id}.json'
-        token_path = os.path.join(current_app.config['TOKEN_DIR'], token_fname)
-        with open(token_path, 'w', encoding='utf-8') as token:
-            token.write(credentials.to_json())
+    # try:
+    user_id = get_id_from_session(session.get('moodle_session'))
+    token_fname = f'{user_id}.json'
+    token_path = os.path.join(current_app.config['TOKEN_DIR'], token_fname)
+    with open(token_path, 'w', encoding='utf-8') as token:
+        token.write(credentials.to_json())
 
-        resp = make_response('綁定成功，請關閉此分頁', 200)
-        return session.make_response(resp)
-    except TypeError:
-        # Can't get user ID from session
-        resp = make_response('Session Expired', 401)
-        return session.make_response(resp)
+    resp = make_response('綁定成功，請關閉此分頁', 200)
+    return session.make_response(resp)
+    # except TypeError:
+    #     # Can't get user ID from session
+    #     resp = make_response('Session Expired', 401)
+    #     return session.make_response(resp)
