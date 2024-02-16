@@ -1,4 +1,5 @@
 import os
+
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -8,7 +9,11 @@ from googleapiclient.discovery import build
 # Wrap google calendar api
 class GoogleCalendar:
     def __init__(self, credentials_path, token_path):
-        self.scopes = ['https://www.googleapis.com/auth/calendar']
+        self.scopes = [
+            'openid',
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/calendar',
+        ]
         self.credentials_path = credentials_path
         self.token_path = token_path
         self.credentials = self.get_credentials(credentials_path, token_path)
@@ -64,7 +69,8 @@ class GoogleCalendar:
         event = self.service.events().insert(calendarId=calendar_id, body=event).execute()
         return event.get('htmlLink')
 
-    def update_event(self, calendar_id, event_id, title, start_time, end_time, description, color_id=1):
+    def update_event(
+            self, calendar_id, event_id, title, start_time, end_time, description, color_id=1):
         event = {
             'summary': title,
             'description': description,

@@ -26,7 +26,11 @@ def auth():
     token = session.create_token()
     flow = Flow.from_client_secrets_file(
         current_app.config['API_CREDS_PATH'],
-        scopes=['https://www.googleapis.com/auth/calendar'],
+        scopes=[
+            'openid',
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/calendar',
+        ],
         state=token,
         redirect_uri=f'{current_app.config["BASE_URL"]}/auth/callback'
     )
@@ -62,7 +66,11 @@ def oauth2callback():
 
     flow = Flow.from_client_secrets_file(
         current_app.config['API_CREDS_PATH'],
-        scopes=['https://www.googleapis.com/auth/calendar'],
+        scopes=[
+            'openid',
+            'https://www.googleapis.com/auth/userinfo.email',
+            'https://www.googleapis.com/auth/calendar',
+        ],
         redirect_uri=f'{current_app.config["BASE_URL"]}/auth/callback'
     )
 
@@ -78,7 +86,7 @@ def oauth2callback():
         with open(token_path, 'w', encoding='utf-8') as token:
             token.write(credentials.to_json())
 
-        resp = make_response('OK', 200)
+        resp = make_response('綁定成功，請關閉此分頁', 200)
         return session.make_response(resp)
     except TypeError:
         # Can't get user ID from session
