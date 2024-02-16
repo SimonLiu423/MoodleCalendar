@@ -38,7 +38,9 @@ class MoodleCrawler:
 
     def get_user_id(self):
         soup = bs4.BeautifulSoup(self.session.get('https://moodle.ncku.edu.tw/').text, self.parser)
+        print(soup.prettify())
         popover = soup.find('div', {'class': 'popover-region-notifications'})
+        print(popover.prettify())
         return popover['data-userid']
 
     def get_login_token(self):
