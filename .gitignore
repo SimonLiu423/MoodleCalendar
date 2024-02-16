@@ -6,6 +6,7 @@ node_modules/
 .vscode/
 .eslintrc.js
 package*.json
+*.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
