@@ -29,31 +29,28 @@ function getAuthUrl () {
 }
 
 async function auth () {
-  getAuthUrl().then(authUrl => {
-    if (authUrl === null) {
-      return false
-    } else {
-      window.open(authUrl)
-      return true
-    }
-  })
+  const authUrl = await getAuthUrl()
+  if (authUrl === null) {
+    return false
+  } else {
+    window.open(authUrl)
+    return true
+  }
 }
 
 function login () {
-  if (isLoggedIn()) {
-    return fetch(baseUrl + '/login', {
-      method: 'POST',
-      headers: {
-        'Moodle-Session': getCookie('MoodleSession')
-      },
-      credentials: 'include'
-    }).then((response) => {
-    }).catch((error) => {
-      console.error(error)
-    })
-  } else {
-    return 'Not logged in'
-  }
+  return fetch(baseUrl + '/login', {
+    method: 'POST',
+    headers: {
+      'Moodle-Session': getCookie('MoodleSession')
+    },
+    credentials: 'include'
+  }).then((response) => {
+    return null
+  }).catch((error) => {
+    console.error(error)
+    return null
+  })
 }
 
 function sync () {
@@ -77,7 +74,14 @@ function onGetEmail () {
     method: 'GET',
     credentials: 'include'
   }).then((response) => {
-    return response.text()
+    if (response.ok) {
+      return response.text()
+    } else {
+      return null
+    }
+  }).catch((error) => {
+    console.error(error)
+    return null
   })
 }
 
@@ -98,9 +102,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true
   } else if (request.action === 'isLoggedIn') {
     if (isLoggedIn()) {
-      login()
+      login().then(() => {
+        sendResponse({ loggedIn: isLoggedIn() })
+      }).catch((error) => {
+        console.error(error)
+        sendResponse({ loggedIn: false })
+      })
+    } else {
+      sendResponse({ loggedIn: false })
     }
-    sendResponse({ loggedIn: isLoggedIn() })
     return true
   } else if (request.action === 'getEmail') {
     onGetEmail().then(email => {

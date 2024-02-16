@@ -31,9 +31,7 @@ async function onAuthClick () {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
   const response = await chrome.tabs.sendMessage(tab.id, { action: 'auth' })
   state.loading = false
-  if (response.status === 'ok') {
-    state.googleAcc = response.email
-  } else {
+  if (response.status !== 'ok') {
     state.errorMsg = '綁定失敗，請稍後再試'
   }
   renderButtons()
@@ -60,7 +58,9 @@ async function onGetEmail () {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
   const response = await chrome.tabs.sendMessage(tab.id, { action: 'getEmail' })
   state.googleAcc = response.email
-  setLocalEmail(response.email)
+  if (response.email !== null) {
+    setLocalEmail(response.email)
+  }
 }
 
 function renderButtons () {
@@ -69,7 +69,9 @@ function renderButtons () {
   let syncButton
   if (state.loggedIn === false) {
     syncButton = createSyncButton(false, '請先登入moodle')
-  } else if (state.googleAcc === null) {
+    container.appendChild(syncButton)
+    return
+  } else if (state.googleAcc === null || state.googleAcc === '') {
     syncButton = createSyncButton(false, '請先綁定帳號')
   } else if (state.errorMsg !== null) {
     syncButton = createSyncButton(true, state.errorMsg)
@@ -176,9 +178,9 @@ async function init () {
   state.loggedIn = loginResponse.loggedIn
 
   await loadLocalEmail()
-  if (state.googleAcc === null) {
+  if (state.googleAcc === null || state.googleAcc === '' || state.googleAcc === undefined) {
     await onGetEmail()
-  } else {
+  } else if (state.loggedIn) {
     renderButtons()
     await onGetEmail()
   }
