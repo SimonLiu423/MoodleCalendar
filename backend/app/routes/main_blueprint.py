@@ -8,6 +8,7 @@ from backend.app.routes.utils.session import Session
 from backend.app.routes.utils.utils import (check_token_exist,
                                             get_id_from_session)
 from backend.app.services.calendar_syncer import __main__
+from backend.app.services.user_info.__main__ import UserInfo
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -79,8 +80,45 @@ def trigger_sync():
         try:
             __main__.main(moodle_session_id=moodle_session_id, token_path=token_path)
             resp = make_response('OK', 200)
-        except Exception:
+        except Exception as e:
             # Error occurred during sync
             resp = make_response('Error occurred during sync', 500)
+            raise e
+
+    return session.make_response(resp)
+
+
+@main_blueprint.route("/binded-email", methods=['GET'])
+def get_binded_email():
+    session = Session(current_app.config, request=request)
+    moodle_session_id = session.get('moodle_session')
+
+    resp = None
+
+    if moodle_session_id is None:
+        resp = make_response('Moodle session not found', 404)
+
+    try:
+        user_id = get_id_from_session(moodle_session_id)
+    except TypeError:
+        # Can't get user ID from session
+        resp = make_response('Session Expired', 401)
+        return session.make_response(resp)
+
+    if not check_token_exist(user_id, current_app.config['TOKEN_DIR']):
+        resp = make_response('Token not found', 404)
+    else:
+        token_fname = f'{user_id}.json'
+        token_path = os.path.join(current_app.config['TOKEN_DIR'], token_fname)
+
+        try:
+            api_creds_path = os.path.join('.', 'secrets', 'api_credentials.json')
+            user_info = UserInfo(api_creds_path, token_path=token_path)
+            email = user_info.get_email()
+
+            resp = make_response(email, 200)
+        except Exception:
+            # Error occurred during sync
+            resp = make_response('Error occurred while obtaining email', 500)
 
     return session.make_response(resp)
