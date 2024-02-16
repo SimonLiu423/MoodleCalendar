@@ -1,8 +1,9 @@
+import datetime
+import json
+import re
+
 import bs4
 import requests
-import re
-import json
-import datetime
 
 
 class MoodleCrawlerError(Exception):
@@ -28,12 +29,17 @@ class MoodleCrawler:
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) '
-                          'AppleWebKit/537.36 (KHTML, like Gecko) '
-                          'Chrome/53.0.2785.143 Safari/537.36',
+            'AppleWebKit/537.36 (KHTML, like Gecko) '
+            'Chrome/53.0.2785.143 Safari/537.36',
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         })
         if session_id:
             self.session.cookies.set('MoodleSession', session_id)
+
+    def get_user_id(self):
+        soup = bs4.BeautifulSoup(self.session.get('https://moodle.ncku.edu.tw/').text, self.parser)
+        popover = soup.find('div', {'class': 'popover-region-notifications'})
+        return popover['data-userid']
 
     def get_login_token(self):
         soup = bs4.BeautifulSoup(self.session.get('https://moodle.ncku.edu.tw/').text, self.parser)
@@ -62,7 +68,8 @@ class MoodleCrawler:
         assign_urls = []
 
         for timestamp in timestamps:
-            soup = bs4.BeautifulSoup(self.session.get(calendar_url.format(timestamp)).text, self.parser)
+            soup = bs4.BeautifulSoup(self.session.get(
+                calendar_url.format(timestamp)).text, self.parser)
             for event in soup.find_all('a', {'data-action': 'view-event'}):
                 href = event['href']
                 if 'assign' in href:
@@ -81,8 +88,8 @@ class MoodleCrawler:
         }
 
         # get submission allowed date
-        submission_allowed_date_th = soup.find('div',
-                                               {'class': 'box py-3 generalbox boxaligncenter submissionsalloweddates'})
+        submission_allowed_date_th = soup.find(
+            'div', {'class': 'box py-3 generalbox boxaligncenter submissionsalloweddates'})
         if submission_allowed_date_th:
             assign_info['can_submit'] = False
         else:
@@ -143,4 +150,10 @@ def get_next_k_month_timestamp(k):
 
 
 def parse_date(date_str):
-    return re.sub(r'(\d+)年\s*(\d{1,2})月\s*(\d{1,2})日.*\)\s*(\d{1,2}:\d{1,2}).*', r'\1-\2-\3T\4', date_str) + ":00"
+    return re.sub(r'(\d+)年\s*(\d{1,2})月\s*(\d{1,2})日.*\)\s*(\d{1,2}:\d{1,2}).*', r'\1-\2-\3T\4',
+                  date_str) + ":00"
+
+
+if __name__ == '__main__':
+    crawler = MoodleCrawler()
+    crawler.get_user_id()

@@ -46,7 +46,7 @@ name: Build and Deploy to Cloud Run
 
 on:
   push:
-    # branches: [ "main" ]
+    branches: [ "deploy_test" , "main" ]
 
 env:
   PROJECT_ID: 'moodle-405408'
@@ -78,7 +78,7 @@ jobs:
 #       NOTE: Alternative option - authentication via credentials json
       - name: Google Auth
         id: auth
-        uses: 'google-github-actions/auth@v0'
+        uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
@@ -112,10 +112,11 @@ jobs:
 
       - name: Deploy to Cloud Run
         id: deploy
-        uses: google-github-actions/deploy-cloudrun@v0
+        uses: google-github-actions/deploy-cloudrun@v2
         with:
           secrets: |
             /secrets/api_credentials.json=api_credentials:latest
+            /envs/.env=env:latest
           service: ${{ env.SERVICE }}
           region: ${{ env.REGION }}
           # NOTE: If using a pre-built image, update the image name here

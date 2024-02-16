@@ -30,7 +30,7 @@ jobs:
           echo $TOKEN_BASE64 | base64 -d > token.json
       - name: Run main.py
         run: |
-          python -m src.sync_calendar.sync_main
+          python -m backend.app.services.calendar_syncer
       - name: Encode token
         id: encode_token
         working-directory: ./secrets

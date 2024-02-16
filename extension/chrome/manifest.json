@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Popup Extension",
+  "version": "1.0",
+  "description": "A simple popup extension.",
+  "icons": {
+    "16": "ui/images/icon-16x16.png",
+    "32": "ui/images/icon-32x32.png",
+    "48": "ui/images/icon-48x48.png",
+    "128": "ui/images/icon-128x128.png"
+  },
+  "host_permissions": [
+    "*://sync-calendar-app-xt6u7vzbeq-de.a.run.app/*"
+  ],
+  "permissions": [
+    "activeTab",
+    "cookies",
+    "storage"
+  ],
+  "externally_connectable": {
+    "matches": [
+      "*://sync-calendar-app-xt6u7vzbeq-de.a.run.app/*"
+    ]
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://moodle.ncku.edu.tw/*"
+      ],
+      "js": [
+        "background.js"
+      ]
+    }
+  ]
+}
