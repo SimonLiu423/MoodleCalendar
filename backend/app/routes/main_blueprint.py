@@ -124,7 +124,7 @@ def get_binded_email():
     return session.make_response(resp)
 
 
-@main_blueprint.route("/", methods=['GET'])
+@main_blueprint.route("/google9dff49afa7ecbee1.html", methods=['GET'])
 def site_verification():
     """
     Handles the site verification request from Google Search Console.
@@ -132,4 +132,4 @@ def site_verification():
     Returns:
         The site verification page.
     """
-    return render_template('site_verification.html')
+    return render_template('google9dff49afa7ecbee1.html')
