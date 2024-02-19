@@ -122,3 +122,14 @@ def get_binded_email():
             resp = make_response('Error occurred while obtaining email', 500)
 
     return session.make_response(resp)
+
+
+@main_blueprint.route("/google9dff49afa7ecbee1.html", methods=['GET'])
+def site_verification():
+    """
+    Handles the site verification request from Google Search Console.
+
+    Returns:
+        The site verification page.
+    """
+    return render_template('google9dff49afa7ecbee1.html')
