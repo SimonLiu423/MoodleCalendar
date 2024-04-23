@@ -59,6 +59,8 @@ def main(moodle_session_id=None, token_path=None):
     if moodle_session_id is None:
         web_crawler.login(moodle_creds_path)
 
+    # TODO(SimonLiu423): check if login is successful
+
     # authenticate google calendar api
     api_creds_path = os.path.join(secrets_path, 'api_credentials.json')
     cal_api = GoogleCalendar(api_creds_path, token_path)
