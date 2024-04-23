@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 
 from dateutil.relativedelta import relativedelta
@@ -49,6 +50,7 @@ def event_identical(event, assign):
 
 
 def main(moodle_session_id=None, token_path=None):
+    logging.basicConfig(level=logging.INFO)
     secrets_path = os.path.join('.', 'secrets')
 
     # login to moodle
@@ -75,7 +77,11 @@ def main(moodle_session_id=None, token_path=None):
         datetime.datetime.now(),
         delta_month=k))
 
+    logging.info('Found %d assignments.', len(assign_info))
+
     for assign in assign_info:
+        logging.info('Processing assignment %s.', assign)
+
         color_id = get_color_id(assign['can_submit'], assign['submission_status'])
 
         # check if the assignment is already in the calendar

@@ -1,5 +1,6 @@
 import datetime
 import json
+import logging
 import re
 
 import bs4
@@ -24,6 +25,7 @@ class DueDateError(MoodleCrawlerError):
 
 class MoodleCrawler:
     def __init__(self, session_id=None):
+        logging.basicConfig(level=logging.INFO)
         self.parser = 'html.parser'
         self.login_token = None
         self.session = requests.Session()
@@ -74,6 +76,8 @@ class MoodleCrawler:
                 href = event['href']
                 if 'assign' in href:
                     assign_urls.append(href)
+
+        logging.info('Found %d assignments urls.', len(assign_urls))
 
         return assign_urls
 
