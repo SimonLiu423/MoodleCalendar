@@ -1,0 +1,127 @@
+@font-face {
+  font-family: 'Yuanti';
+  src:
+    local('Yuanti'),
+    url('./fonts/Yuanti.ttf') format('truetype');
+}
+
+body {
+  margin: 0;
+  border: none;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 40px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(farthest-side, #ff9c09 94%, #0000) top/4px 4px no-repeat,
+    conic-gradient(#0000 30%, #ff9c09);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
+  mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
+  animation: l13 1s infinite linear;
+}
+@keyframes l13 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+.App {
+  width: 255px;
+  height: 410px;
+  color: white;
+  background-color: #43b0f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  width: 178px;
+  height: 178px;
+  padding-bottom: 30px;
+}
+
+.main-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  background-color: white;
+  border: none;
+  border-radius: 12px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  cursor: pointer;
+  box-shadow: 0 2px 2px rgb(0, 0, 0, 0.25);
+  margin-bottom: 10px;
+}
+
+.secondary-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 12px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+  cursor: pointer;
+  background-color: #8fbde7;
+  width: 125px;
+  box-shadow: 0 2px 2px rgb(0, 0, 0, 0.25);
+  margin-bottom: 9px;
+}
+
+.error-btn {
+  flex-direction: column;
+  padding-bottom: 4px;
+}
+
+.disabled {
+  background-color: #7b96a8;
+}
+
+.main-btn:hover {
+  box-shadow: 0 4px 4px rgb(0, 0, 0, 0.25);
+}
+
+.main-btn:active {
+  box-shadow: 0 2px 2px rgb(0, 0, 0, 0.25);
+}
+
+.secondary-btn:hover {
+  box-shadow: 0 4px 4px rgb(0, 0, 0, 0.25);
+}
+
+.secondary-btn:active {
+  box-shadow: 0 2px 2px rgb(0, 0, 0, 0.25);
+}
+
+.main-text {
+  font-size: 24px;
+  font-family: 'Yuanti';
+}
+
+.secondary-text {
+  color: #effafb;
+  font-size: 16px;
+  font-family: 'Yuanti';
+}
+
+.enabled-text {
+  color: #268be9;
+}
+
+.error-text {
+  color: #ff9c09;
+  font-family: 'Yuanti';
+}
+
+.disabled-text {
+  color: #c3cecf;
+}
