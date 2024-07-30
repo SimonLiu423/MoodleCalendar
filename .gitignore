@@ -1,13 +1,3 @@
-secrets/api_credentials.json
-secrets/moodle_credentials.json
-secrets/token.json
-.idea/
-node_modules/
-.vscode/
-.eslintrc.js
-package*.json
-*.DS_Store
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

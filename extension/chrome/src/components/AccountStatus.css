@@ -1,0 +1,12 @@
+.account-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 30px;
+  font-size: 11px;
+  color: #e5e5e5;
+  white-space: pre;
+  font-family: 'Yuanti';
+}

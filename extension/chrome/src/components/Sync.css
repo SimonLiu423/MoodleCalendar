@@ -1,0 +1,23 @@
+.check-icon {
+  margin-left: 4px;
+  height: 18px;
+}
+
+/* HTML: <div class="sync-loader"></div> */
+.sync-loader {
+  margin-left: 4px;
+  width: 20px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(farthest-side, #ff9c09 94%, #0000) top/4px 4px no-repeat,
+    conic-gradient(#0000 30%, #ff9c09);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
+  mask: radial-gradient(farthest-side, #0000 calc(100% - 4px), #000 0);
+  animation: l13 1s infinite linear;
+}
+@keyframes l13 {
+  100% {
+    transform: rotate(1turn);
+  }
+}

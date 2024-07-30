@@ -4,26 +4,32 @@
   "version": "1.0",
   "description": "An extension that syncs NCKU Moodle calendar with Google Calendar.",
   "icons": {
-    "16": "ui/images/icon-16x16.png",
-    "32": "ui/images/icon-32x32.png",
-    "48": "ui/images/icon-48x48.png",
-    "128": "ui/images/icon-128x128.png"
+    "16": "public/icon-16x16.png",
+    "32": "public/icon-32x32.png",
+    "48": "public/icon-48x48.png",
+    "128": "public/icon-128x128.png"
   },
   "host_permissions": [
-    "*://sync-calendar-app-xt6u7vzbeq-de.a.run.app/*"
+    "*://sync-calendar-app-xt6u7vzbeq-de.a.run.app/*",
+    "https://moodle.ncku.edu.tw/"
   ],
   "permissions": [
     "activeTab",
+    "tabs",
+    "scripting",
     "cookies",
     "storage"
   ],
   "externally_connectable": {
     "matches": [
-      "*://sync-calendar-app-xt6u7vzbeq-de.a.run.app/*"
+      "https://sync-calendar-app-xt6u7vzbeq-de.a.run.app/*"
     ]
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "js/index.html"
+  },
+  "background": {
+    "service_worker": "js/serviceWorker.js"
   },
   "content_scripts": [
     {
@@ -31,7 +37,7 @@
         "https://moodle.ncku.edu.tw/*"
       ],
       "js": [
-        "background.js"
+        "js/content.js"
       ]
     }
   ]
