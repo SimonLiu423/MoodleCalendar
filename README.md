@@ -22,7 +22,7 @@ Step 3.
 Open the extention & click "Bind Account" \
 開啟擴充功能並點選「綁定帳號」
 
-![alt text](imgs/image-1.png =300x)
+<img src="imgs/image-1.png" width="300">
 
 
 Step 4.
@@ -30,7 +30,7 @@ Step 4.
 After binding account, go back to Moodle and click "Sync". \
 綁定帳號後，回到 Moodle 並點選「同步」。
 
-![alt text](imgs/image-2.png =300x)
+<img src="imgs/image-2.png" width="300">
 
 
 Step 5.
