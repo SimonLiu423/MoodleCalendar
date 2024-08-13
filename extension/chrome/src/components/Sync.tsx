@@ -13,7 +13,7 @@ export default function Sync({ enabled, isSuccess, errorMsg, loading, onSync }: 
   const className = 'main-btn' + (!enabled ? ' disabled' : '') + (hasError ? ' error-btn' : '');
   const textClass = 'main-text' + (enabled ? ' enabled-text' : ' disabled-text');
   return (
-    <button className={className} onClick={onSync}>
+    <button className={className} onClick={onSync} disabled={!enabled}>
       <span className={textClass}>同步</span>
       {isSuccess && (
         <img
