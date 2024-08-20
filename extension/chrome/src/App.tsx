@@ -4,7 +4,7 @@ import AccountStatus from './components/AccountStatus';
 import BindAccount from './components/BindAccount';
 import Sync from './components/Sync';
 import { API_URL } from './constants';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface AppState {
   checkingStatus: boolean;
@@ -38,8 +38,12 @@ function App() {
       const res = await axios.get(API_URL + '/oauth/status/', config);
       return res.data;
     } catch (err) {
-      setState((state) => ({ ...state, errorMsg: '無法連線至伺服器' }));
-      console.log(err);
+      if (err instanceof AxiosError) {
+        if (err.response?.status !== 401) {
+          setState((state) => ({ ...state, errorMsg: '無法連線至伺服器' }));
+          console.log(err);
+        }
+      }
     }
     return null;
   }

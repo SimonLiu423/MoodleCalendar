@@ -1,3 +1,2 @@
-// export const API_URL = 'https://sync-calendar-app-xt6u7vzbeq-de.a.run.app';
-export const API_URL = 'http://localhost:8000';
+export const API_URL = 'https://simonliu423.dev/mc/api';
 export const MOODLE_URL = 'https://moodle.ncku.edu.tw/*';
